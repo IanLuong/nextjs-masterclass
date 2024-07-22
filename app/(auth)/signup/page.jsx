@@ -1,9 +1,35 @@
-import React from 'react';
+'use client';
+import { createClient } from '@/utils/supabase/client';
+import React, { useState } from 'react';
+import AuthForm from '../AuthForm';
+import { useRouter } from 'next/navigation';
 
 export default function Signup() {
+  const router = useRouter();
+  const [error, setError] = useState('');
+
+  async function handleSubmit(e, email, password) {
+    e.preventDefault();
+
+    const supabase = createClient();
+    const {error} = await supabase.auth.signUp({
+      email,
+      password,
+      options: { emailRedirectTo: `${location.origin}/api/auth/callback` },
+    });
+    if(error) {
+      setError(error.message)
+    } else {
+      router.push('/verify')
+    }
+  }
+
+
   return (
     <main>
-      <h2 className="text-center">Sign up</h2>
+      <h2 className="text-center">Sign Up</h2>
+      <AuthForm handleSubmit={handleSubmit} />
+      {error && <div className='error'>{error}</div>}
     </main>
   );
 }
