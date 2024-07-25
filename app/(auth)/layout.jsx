@@ -1,7 +1,15 @@
+import { createClient } from '@/utils/supabase/server';
 import Link from 'next/link';
-import React from 'react';
+import { redirect } from 'next/navigation';
 
-export default function AuthLayout({ children }) {
+export default async function AuthLayout({ children }) {
+  const supabase = createClient();
+  const { data } = await supabase.auth.getUser();
+
+  if (data.user) {
+    redirect('/');
+  }
+
   return (
     <>
       <nav>
