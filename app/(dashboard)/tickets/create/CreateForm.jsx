@@ -1,71 +1,24 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
+import { createTicket } from '../actions';
 
 export default function CreateForm() {
-  const router = useRouter();
-
-  const [data, setData] = useState({
-    title: '',
-    body: '',
-    priority: 'low',
-  });
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
-
-    const res = await fetch('http://localhost:3000/api/tickets', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    });
-
-    const json = await res.json();
-    console.log("🚀 ~ handleSubmit ~ json:", json)
-
-    if (json.error) {
-      console.log(error.message);
-    }
-    if (json.data) {
-      router.refresh();
-      router.push('/tickets');
-    }
-  };
-
   return (
-    <form onSubmit={handleSubmit} className="w-1/2">
+    <form action={createTicket} className="w-1/2">
       <label>
         <span>Title:</span>
-        <input
-          required
-          type="text"
-          onChange={(e) =>
-            setData((prev) => ({ ...prev, title: e.target.value }))
-          }
-          value={data.title}
-        />
+        <input name="title" required type="text" />
       </label>
       <label>
-        <span>Title:</span>
-        <textarea
-          required
-          onChange={(e) =>
-            setData((prev) => ({ ...prev, body: e.target.value }))
-          }
-          value={data.body}
-        />
+        <span>Body:</span>
+        <textarea name="body" required />
       </label>
       <label>
         <span>Priority:</span>
-        <select
-          onChange={(e) =>
-            setData((prev) => ({ ...prev, priority: e.target.value }))
-          }
-          value={data.priority}
-        >
+        <select name="priority">
           <option value="low">Low Priority</option>
           <option value="medium">Medium Priority</option>
           <option value="high">High Priority</option>
