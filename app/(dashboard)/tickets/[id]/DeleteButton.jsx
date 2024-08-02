@@ -1,13 +1,13 @@
 'use client';
 
-import { createClient } from '@/utils/supabase/client';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useTransition } from 'react';
 import { TiDelete } from 'react-icons/ti';
+import { deleteTicket } from '../actions';
 
 export default function DeleteButton({ id }) {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
   const handleClick = async () => {
     setIsLoading(true);
@@ -29,8 +29,12 @@ export default function DeleteButton({ id }) {
   };
 
   return (
-    <button className="btn-primary" onClick={handleClick} disabled={isLoading}>
-      {isLoading ? (
+    <button
+      className="btn-primary"
+      onClick={() => startTransition(deleteTicket(id))}
+      disabled={isPending}
+    >
+      {isPending ? (
         <>
           <TiDelete />
           Deleting...

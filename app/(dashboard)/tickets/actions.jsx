@@ -17,6 +17,23 @@ export async function createTicket(formData) {
     .from('Tickets')
     .insert({ ...ticket, user_email: user.email });
 
+  if (error) {
+    throw new Error('Could not add new ticket.');
+  }
+
+  revalidatePath('/');
+  redirect('/tickets');
+}
+
+export async function deleteTicket(id) {
+  const supabase = createClient();
+
+  const { error } = await supabase.from('Tickets').delete().eq('id', id);
+
+  if (error) {
+    throw new Error('Could not delete the ticket.');
+  }
+
   revalidatePath('/');
   redirect('/tickets');
 }
